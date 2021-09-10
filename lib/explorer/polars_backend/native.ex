@@ -176,5 +176,11 @@ defmodule Explorer.PolarsBackend.Native do
   def s_zip_with(_s, _mask, _other), do: err()
   def s_n_unique(_s), do: err()
 
+  # Lazy
+  def lf_lazy(_df), do: err()
+  def lf_collect(_lf), do: err()
+  def lf_describe_plan(_lf), do: err()
+  def lf_select(_lf, _sel), do: err()
+
   defp err, do: :erlang.nif_error(:nif_not_loaded)
 end

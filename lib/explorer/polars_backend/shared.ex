@@ -20,11 +20,17 @@ defmodule Explorer.PolarsBackend.Shared do
     unwrap(result, groups)
   end
 
+  def apply_native(%Explorer.PolarsBackend.LazyFrame{} = lf, fun, args) do
+    result = apply(Native, fun, [lf | args])
+    unwrap(result, [])
+  end
+
   def to_polars_df(%DataFrame{data: %PolarsDataFrame{} = polars_df}), do: polars_df
   def to_polars_df(%PolarsDataFrame{} = polars_df), do: polars_df
 
   def to_dataframe(df, groups \\ [])
   def to_dataframe(%DataFrame{} = df, _groups), do: df
+  def to_lazyframe(lf, _groups), do: lf
 
   def to_dataframe(%PolarsDataFrame{} = polars_df, groups),
     do: %DataFrame{data: polars_df, groups: groups}
@@ -43,6 +49,7 @@ defmodule Explorer.PolarsBackend.Shared do
   def unwrap(df_or_s, groups \\ [])
   def unwrap({:ok, %PolarsSeries{} = series}, _), do: to_series(series)
   def unwrap({:ok, %PolarsDataFrame{} = df}, groups), do: to_dataframe(df, groups)
+  def unwrap({:ok, %Explorer.PolarsBackend.LazyFrame{} = lf}, _), do: to_lazyframe(lf, [])
   def unwrap({:ok, value}, _), do: value
   def unwrap({:error, error}, _), do: raise("#{error}")
 
