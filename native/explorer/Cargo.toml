@@ -27,6 +27,7 @@ features = [
   "dtype-date64",
   "is_in",
   "json",
+  "lazy",
   "parquet",
   "pivot",
   "plain_fmt",

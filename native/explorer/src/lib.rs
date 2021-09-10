@@ -7,15 +7,20 @@ static GLOBAL: MiMalloc = MiMalloc;
 mod dataframe;
 mod datatypes;
 mod error;
+mod lazyframe;
 mod series;
 
 use dataframe::*;
-pub use datatypes::{ExDataFrame, ExDataFrameRef, ExSeries, ExSeriesRef};
+pub use datatypes::{
+    ExDataFrame, ExDataFrameRef, ExLazyFrame, ExLazyFrameRef, ExSeries, ExSeriesRef,
+};
 pub use error::ExplorerError;
 use series::*;
+use lazyframe::*;
 
 fn on_load(env: Env, _info: Term) -> bool {
     rustler::resource!(ExDataFrameRef, env);
+    rustler::resource!(ExLazyFrameRef, env);
     rustler::resource!(ExSeriesRef, env);
     true
 }
@@ -77,6 +82,11 @@ rustler::init!(
         df_vstack,
         df_width,
         df_with_column,
+        // lazy
+        lf_lazy,
+        lf_collect,
+        lf_select,
+        lf_describe_plan,
         // series
         s_add,
         s_append,

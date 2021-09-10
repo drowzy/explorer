@@ -6,6 +6,7 @@ use std::sync::RwLock;
 use std::result::Result;
 
 pub struct ExDataFrameRef(pub RwLock<DataFrame>);
+pub struct ExLazyFrameRef(pub RwLock<polars::lazy::frame::LazyFrame>);
 pub struct ExSeriesRef(pub Series);
 
 #[derive(NifStruct)]
@@ -20,9 +21,21 @@ pub struct ExSeries {
     pub resource: ResourceArc<ExSeriesRef>,
 }
 
+#[derive(NifStruct)]
+#[module = "Explorer.PolarsBackend.LazyFrame"]
+pub struct ExLazyFrame {
+    pub resource: ResourceArc<ExLazyFrameRef>,
+}
+
 impl ExDataFrameRef {
     pub fn new(df: DataFrame) -> Self {
         Self(RwLock::new(df))
+    }
+}
+
+impl ExLazyFrameRef {
+    pub fn new(lf: LazyFrame) -> Self {
+        Self(RwLock::new(lf))
     }
 }
 
@@ -44,6 +57,14 @@ impl ExSeries {
     pub fn new(s: Series) -> Self {
         Self {
             resource: ResourceArc::new(ExSeriesRef::new(s)),
+        }
+    }
+}
+
+impl ExLazyFrame {
+    pub fn new(lf: LazyFrame) -> Self {
+        Self {
+            resource: ResourceArc::new(ExLazyFrameRef::new(lf)),
         }
     }
 }
